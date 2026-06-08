@@ -17,7 +17,7 @@ for i in range(200):
 
 prey_x = 50  
 prey_y = 50
-prey_energy = 100 
+prey_energy = 150 
 
 pygame.init()
 window = pygame.display.set_mode((800, 800))
@@ -36,7 +36,7 @@ while running:
     if prey_y >= GRID_SIZE: prey_y = GRID_SIZE - 1
 
     if food_grid[prey_x, prey_y] == 1:
-        prey_energy += 30      
+        prey_energy += 50      
         food_grid[prey_x, prey_y] = 0 
 
     prey_energy -= 1 
@@ -59,6 +59,7 @@ while running:
         running = False
              
     pygame.display.flip()
+    print(prey_energy)
     clock.tick(10) 
 
 pygame.quit()
