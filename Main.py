@@ -27,6 +27,41 @@ predators = [
     {"x": 90, "y": 90, "energy": 250}
 ]
 
+prey_history = []
+pred_history = []
+MAX_HISTORY = 100 
+
+pygame.font.init()
+font = pygame.font.SysFont('Arial', 18)
+
+def draw_stats(window, preys, predators, is_night):
+    stats = [
+        f"Preys: {len(preys)}",
+        f"Predators: {len(predators)}",
+        f"Time: {'Night' if is_night else 'Day'}",
+        f"Avg Prey Speed: {sum(p['speed'] for p in preys)/len(preys):.1f}" if preys else "Preys: 0"
+    ]
+    
+    for i, text in enumerate(stats):
+        surface = font.render(text, True, (255, 255, 255))
+        window.blit(surface, (10, 10 + i * 20))
+
+def draw_graph(window, prey_hist, pred_hist):
+    graph_rect = pygame.Rect(550, 50, 200, 100)
+    pygame.draw.rect(window, (0, 0, 0), graph_rect) # Background γραφήματος
+    
+    # Σχεδίαση γραμμών
+    for i in range(1, len(prey_hist)):
+        # Πράσινη γραμμή για preys
+        start_pos = (550 + (i-1)*2, 150 - prey_hist[i-1]//2)
+        end_pos = (550 + i*2, 150 - prey_hist[i]//2)
+        pygame.draw.line(window, (0, 255, 100), start_pos, end_pos)
+        
+        # Κόκκινη γραμμή για predators
+        start_pos_p = (550 + (i-1)*2, 150 - pred_hist[i-1]*2)
+        end_pos_p = (550 + i*2, 150 - pred_hist[i]*2)
+        pygame.draw.line(window, (255, 50, 50), start_pos_p, end_pos_p)
+
 while running:
     if is_night:
         window.fill((5, 5, 20))
@@ -108,6 +143,16 @@ while running:
     
     is_night = (frame_count % 600 >= 300)
     frame_count += 1
+    draw_stats(window, preys, predators, is_night)
+    draw_stats(window, preys, predators, is_night)
+    draw_graph(window, prey_history, pred_history) 
+    
+    prey_history.append(len(preys))
+    pred_history.append(len(predators))
+
+    if len(prey_history) > MAX_HISTORY:
+        prey_history.pop(0)
+        pred_history.pop(0)
     pygame.display.flip()
     clock.tick(15)
 
